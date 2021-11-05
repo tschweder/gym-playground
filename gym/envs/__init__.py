@@ -644,3 +644,11 @@ register(
     entry_point="gym.envs.unittest:MemorizeDigits",
     reward_threshold=20,
 )
+
+# My registries
+
+register(
+    id="Crypto-v1",
+    entry_point="gym.envs.crypto:CryptoEnv",
+    reward_threshold=1,
+)

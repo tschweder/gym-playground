@@ -7,7 +7,7 @@
 * It should have at least the following files:
   ```sh
   gym-foo/
-    README.md
+    original_README.md
     setup.py
     gym_foo/
       __init__.py
