@@ -1,4 +1,15 @@
 Scribble notes for 01-crpyto-prediction
 	
 	action_space
-		-100% up to +1,000,000.00%
+		-100% up to +1,000,000.00% => (multiplicator) 0 to 1,000,000 (everything below 1 is negative %)
+	observation_space
+		to be investigated
+	reward_range
+		0 ... perfect prediction
+		1 ... worst prediction = max increase (prediction) but least increase (enviorment result) or other way around
+	
+	enviorment
+		100 	relevant coins/tokens
+		+inf 	less relevant coins/tokens
+		
+		
