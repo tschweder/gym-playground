@@ -1,22 +1,12 @@
 import numpy as np
 import gym
-from gym.wrappers import record_episode_statistics
-from gym.utils.crypto_coin import CryptoCoin
 import random
-
+import os
+import os.path
 
 def main():
 
-    coin = CryptoCoin(
-            coin="BTC",
-            market_cap=300,
-            trading_volume=10,
-            current_coin_volume=500,
-            coin_volume=1000,
-            value=0.2
-    )
-    env = gym.make(id="Crypto-v1", coin=coin, )
-    env = record_episode_statistics(env)
+    env = gym.make(id="Crypto-v1")
 
     # initialize q-table
     state_size = env.observation_space.n
@@ -27,19 +17,21 @@ def main():
     learning_rate = 0.9
     discount_rate = 0.8
     epsilon = 1.0
-    decay_rate = 0.01
-    state_list = env.reset()
-
-    for e in 101:
+    decay_rate = 0.00225
+    state_list = env.get_list()
+    env.reset()
+    for e in range(len([name for name in os.listdir('./data_collector/crypto_crawler/data/')]) - 1):
         if random.uniform(0, 1) < epsilon:
             # explore
             action = env.action_space.sample()
         else:
-            action = np.argmax(qtable[state, :])
-        prediction, reward, done, info = env.step(action)
-        qtable[state, action] = qtable[state, action] + learning_rate * (
-                    reward + discount_rate * np.max(qtable[prediction, :]) - qtable[state, action])
-        state = state_list[e]
+            # exploit
+            action = np.argmax(qtable[e, :])
+
+        obs, reward, done, info = env.step(action)
+        qtable[e, action] = qtable[e, action] + learning_rate * (
+                    reward + discount_rate * np.max(qtable[e+1, :]) - qtable[e, action])
+
         epsilon -= decay_rate
     env.render()
 

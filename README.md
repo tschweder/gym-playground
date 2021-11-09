@@ -19,3 +19,10 @@ I used to orientate myself on. But I will look further for more suiting learning
 For my use-case many people on the internet are convinced that this is the best one to 
 predict a stock price. Anyways I will stay with the Q-Learning, add some time awareness and
 try my luck.
+
+Update: Well that was a stupid idea, because the Q-Learning has its state list and only learns
+from what action brings (or not brings) from this particular state, so unless the bitcoin price
+has reoccurring patterns, this won't do much good, but for learning purposes I will still continue.
+
+Up-Update: My prediction algorithm learned that 0 is more efficient than most of the other predictions
+therefore if Bitcoin is at 0$ next week I predicted it, in any other case my attempt failed.
