@@ -1,7 +1,7 @@
 import scrapy
 import time
 import re
-from gym.utils.crypto_coin import CryptoCoin
+import json
 
 
 class CryptoSpider(scrapy.Spider):
@@ -13,42 +13,39 @@ class CryptoSpider(scrapy.Spider):
     def parse(self, response):
         time.sleep(10)  # so server is not killing the crawler
         table_rows = response.css('tr.cmc-table-row').getall()
+        i = 0
+        coins_json = []
+        for table_row in table_rows:
+            # because the website is loading dynamically (and I don't need more) we keep it at the top 20 coins
+            if i >= 20:
+                break
+            # print('---------------------------------------')
+            price = '0'
+            name = 'Error'
+            supply = '0'
+            string_row = ''.join(table_row)
+            string_row_list = re.split(r'<|>', string_row)
+            for index, element in enumerate(string_row_list):
+                # print("%d :" % index + element)
+                if 'cmc-table__cell--sort-by__circulating-supply' in element:
+                    supply = string_row_list[index + 3]
+                elif 'cmc-table__cell--sort-by__price' in element:
+                    price = string_row_list[index + 3]
+                elif 'class="cmc-table__column-name--name cmc-link"' in element:
+                    name = string_row_list[index + 1]
+            coin = {'name': name,
+                    'price': price,
+                    'supply': supply}
+            coins_json.append(json.dumps(coin, indent=3))
+            i += 1
+
         url_date = response.url.split('/')[-2]
-        filename = f'data\\crypto-data-from-{url_date}'
-        with open(filename, 'wb') as f:
-            i = 0
-            for table_row in table_rows:
-                if i >= 20:
-                    break
-                # print('---------------------------------------')
-                price = '0'
-                name = 'Error'
-                supply = '0'
-                string_row = ''.join(table_row)
-                string_row_list = re.split(r'<|>', string_row)
-                for index, element in enumerate(string_row_list):
-                    # print("%d :" % index + element)
-                    if 'cmc-table__cell--sort-by__circulating-supply' in element:
-                        supply = string_row_list[index+3]
-                    elif 'cmc-table__cell--sort-by__price' in element:
-                        price = string_row_list[index+3]
-                    elif 'class="cmc-table__column-name--name cmc-link"' in element:
-                        name = string_row_list[index+1]
-                f.write(b"Name: ")
-                f.write(bytes(name, 'utf-8'))
-                f.write(b"\nPrice: ")
-                f.write(bytes(price, 'utf-8'))
-                f.write(b"\nSupply: ")
-                f.write(bytes(supply, 'utf-8'))
-                f.write(b"\n--------------------------------------------------\n")
+        filename = f'data\\crypto-data-from-{url_date}.json'
+        with open(filename, 'w') as f:
+            json.dump(coins_json, f)
+            # for coin_json in coins_json:
+            #     json.dump(coin_json, f)
 
-                i += 1
-
-        # i = 0
-        # for element in string_row_list:
-        #     print(element + " %d" % i)
-        #     i += 1
-                
         # gets all links from the div that contains the next week button
         links = response.css('a.iv7acg-0.iqSSDO.cmc-link::attr(href)').getall() 
         
@@ -68,4 +65,3 @@ class CryptoSpider(scrapy.Spider):
             # set the next week as new request and calls parse() again
             next_page = response.urljoin(next_link)
             yield scrapy.Request(next_page, callback=self.parse)
-
