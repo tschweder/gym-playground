@@ -26,3 +26,11 @@ has reoccurring patterns, this won't do much good, but for learning purposes I w
 
 Up-Update: My prediction algorithm learned that 0 is more efficient than most of the other predictions
 therefore if Bitcoin is at 0$ next week I predicted it, in any other case my attempt failed.
+### Conclusion
+RL is not very successful the way I used it, for predictions, especially in stock market,
+regression is more efficient. The data collector was a success and is already used by others.
+## 02 - Schnapsen (card game)
+For my second attempt I decided to go with something more suiting for RL and something I grew up with.
+The Austrians favourite card game [Schnapsen](https://en.wikipedia.org/wiki/Schnapsen),
+it is a very strategic game, with limited cards (20 cards) so my AI shouldn't take too long,
+to get a hang on it.
